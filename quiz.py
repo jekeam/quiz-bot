@@ -29,7 +29,13 @@ def start(update, context):
             
 
 def callback_query_handler(update, context):
-    print('button')
+    if update.callback_query.data == 'agree':
+         user = update.callback_query.from_user
+         id = user.id
+         first_name = user.first_name
+         last_name = user.last_name
+         username = user.username
+         print('id:{}, first_name:{}, last_name: {}, username: {}'.format(id, first_name, last_name, username))
 
 if __name__=="__main__":
     
