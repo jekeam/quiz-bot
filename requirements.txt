@@ -5,3 +5,4 @@ cryptography
 telegram
 python-telegram-bot
 emoji
+peewee
