@@ -7,6 +7,7 @@ from telegram.ext.callbackcontext import CallbackContext
 from threading import Thread
 import os
 from emoji import emojize
+from db import User
 
 def start(update, context):
     keyboard = []
@@ -36,6 +37,9 @@ def callback_query_handler(update, context):
          last_name = user.last_name
          username = user.username
          print('id:{}, first_name:{}, last_name: {}, username: {}'.format(id, first_name, last_name, username))
+         user, created = User.get_or_create(id=id, first_name=first_name, last_name=last_name, username=username)
+         print(user)
+         print(created)
 
 if __name__=="__main__":
     

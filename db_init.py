@@ -1,5 +1,5 @@
 # coding: utf-8
-from db_model import *
+from db import *
 
 db.connect()
 db.create_tables([User,])
