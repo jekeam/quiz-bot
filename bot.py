@@ -72,7 +72,7 @@ def email(update, context):
     keyboard.append([InlineKeyboardButton(text='ДА', callback_data=str(QUIZ))])
     reply_markup = InlineKeyboardMarkup(keyboard)   
             
-    update.message.reply_text(text='Приятно познакомиться ' + emojize(':smile:', use_aliases=True) + '\nИтак, 5 заданий и мерч твой!\nГотов начать?', reply_markup=reply_markup)
+    update.message.reply_text(text='Приятно познакомиться ' + emojize(':simple_smile:', use_aliases=True) + '\nИтак, 5 заданий и мерч твой!\nГотов начать?', reply_markup=reply_markup)
     
     return QUIZ    
     
