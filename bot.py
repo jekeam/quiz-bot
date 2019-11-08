@@ -139,6 +139,10 @@ def quiz(update, context):
     
     print('quiz end')
     return QUIZ
+
+
+def subcrible(update):
+    update.callback_query.message.reply_text(text='Отлично! Вступай в Наш канал @IT_Sber_EKB', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text='Подписаться', url="t.me/IT_Sber_EKB")]]))
     
 
 def technologies(update, context):
@@ -171,7 +175,7 @@ def technologies(update, context):
             context.user_data['question_num'] = '1'
             
         if not answer:
-            update.callback_query.message.reply_text('Отлично! Вступай в Наш канал @IT_Sber_EKB')
+            subcrible(update)
             
             keyboard = []
             for n, i in enumerate(question_answers):
@@ -356,7 +360,7 @@ def office(update, context):
             context.user_data['question_num'] = '1'
             
         if not answer:
-            update.callback_query.message.reply_text('Отлично! Вступай в Наш канал @IT_Sber_EKB')
+            subcrible(update)
             
             keyboard = []
             for n, i in enumerate(question_answers):
