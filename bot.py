@@ -12,7 +12,6 @@ import time
 
 def check_done(update, context):
     qn = context.user_data.get('question_num','0')
-    print(qn)
     if str(qn) != '6':
         pass
     else:
@@ -149,7 +148,10 @@ def email(update, context):
 
 
 def subcrible(update):
-    update.callback_query.message.reply_text(text='Отлично! Вступай в Наш канал @IT_Sber_EKB', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text='Подписаться', url="t.me/IT_Sber_EKB")]]))
+    update.callback_query.message.reply_text(
+        text='Отлично! Вступай в Наш канал @IT_Sber_EKB', 
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text='Подписаться' +  emojize(':sunglasses:', use_aliases=True), url="t.me/IT_Sber_EKB")]])
+    )
     
 
 def q1(update, context):
@@ -314,7 +316,12 @@ def done_send(update, context):
     except:
         message = update.message
     message.reply_text(text='Вы ответили правильно на '+ str(context.user_data.get('question_ok', '0')) + ' вопросов из 5!',  parse_mode=telegram.ParseMode.MARKDOWN)
-    message.reply_text(text='Поздравляю! 🎉 Испытание пройдено! Подойти на стойку Сбербанка, покажи это сообщение, получи свой мерч и уникальный номер для розыгрыша рюкзака. Розыгрыш состоится в *19.00 и 20:30* на стенде Сбербанка. Удачи!',  parse_mode=telegram.ParseMode.MARKDOWN)
+    message.reply_text(text='Поздравляю! 🎉 Испытание пройдено! Подпишись на рассылку карьерного портала по ссылке  https://sbergraduate.ru/subscription/\n' + \
+        'Подойди на стойку Сбербанка, покажи это сообщение и скрин о подписке, получи свой мерч и уникальный номер для розыгрыша крутых призов.\n'
+        'Розыгрыш состоится в *19:00 и 20:30* на стенде Сбербанка.\n'
+        'Удачи!'
+        ,parse_mode=telegram.ParseMode.MARKDOWN
+    )
     context.user_data['question_num'] = '6'
 
 if __name__=='__main__':
