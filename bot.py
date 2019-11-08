@@ -127,26 +127,6 @@ def email(update, context):
     print('email end')
     context.user_data['answer'] = answer
     return QUIZ
-    
-    
-# def quiz(update, context):
-#     print('quiz start')
-#     print('quiz user_data: ' + str(context.user_data))
-    
-#     choise = context.user_data.get('quiz', 'start')
-    
-#     if choise == 'start':
-#         keyboard = []
-#         keyboard.append([InlineKeyboardButton(text='Технологии 👨‍💻', callback_data=('technologies'))])
-#         keyboard.append([InlineKeyboardButton(text='Офис 🏦', callback_data=('office'))])
-#         keyboard.append([InlineKeyboardButton(text='Работа с клиентами 👩‍💼💰👨‍💼' + emojize(':slightly_smiling_face:', use_aliases=True), callback_data=('sales'))])
-        
-#         reply_markup = InlineKeyboardMarkup(keyboard)   
-#         update.callback_query.message.reply_text(text='Выбери, что тебе больше всего нравится', reply_markup=reply_markup)
-    
-#     print('quiz end')
-#     return QUIZ
-
 
 def subcrible(update):
     update.callback_query.message.reply_text(
@@ -316,7 +296,7 @@ def done_send(update, context):
         message = update.callback_query.message
     except:
         message = update.message
-    message.reply_text(text='У тебя '+ str(context.user_data.get('question_ok', '0')) + ' правельных ответов!',  parse_mode=telegram.ParseMode.MARKDOWN)
+    message.reply_text(text='У тебя '+ str(context.user_data.get('question_ok', '0')) + ' правельных ответа из 5!',  parse_mode=telegram.ParseMode.MARKDOWN)
     message.reply_text(text='Поздравляю! 🎉 Испытание пройдено! Подпишись на рассылку карьерного портала по ссылке  https://sbergraduate.ru/subscription/\n' + \
         'Подойди на стойку Сбербанка, покажи это сообщение и скрин о подписке, получи свой мерч и уникальный номер для розыгрыша крутых призов.\n'
         'Розыгрыш состоится в *19:00 и 20:30* на стенде Сбербанка.\n'
