@@ -185,7 +185,7 @@ def q2(update, context):
     ]
     answer = update.callback_query.data.split(':')[1]
         
-    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nТвой ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
 
     if answer == '1':
         context.user_data['question_ok'] = '1'
@@ -214,7 +214,7 @@ def q3(update, context):
     ]
     answer = update.callback_query.data.split(':')[1]
         
-    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nТвой ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
 
     if answer == '3':
         context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
@@ -245,7 +245,7 @@ def q4(update, context):
     ]
     answer = update.callback_query.data.split(':')[1]
         
-    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nТвой ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
     
     if answer == '1':
         context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
@@ -271,7 +271,7 @@ def q5(update, context):
     ]
     answer = update.callback_query.data.split(':')[1]
         
-    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nТвой ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
     
     if answer == '1':
         context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
@@ -302,7 +302,7 @@ def q6(update, context):
     ]
     answer = update.callback_query.data.split(':')[1]
         
-    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nТвой ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
     
     if answer == '3':
         context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
