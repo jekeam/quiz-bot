@@ -9,6 +9,7 @@ import os
 from emoji import emojize
 from db import User
 import time
+import datetime
 
 def check_done(update, context):
     qn = context.user_data.get('question_num','0')
@@ -315,7 +316,7 @@ def done_send(update, context):
         message = update.callback_query.message
     except:
         message = update.message
-    message.reply_text(text='Вы ответили правильно на '+ str(context.user_data.get('question_ok', '0')) + ' вопросов из 5!',  parse_mode=telegram.ParseMode.MARKDOWN)
+    message.reply_text(text='У тебя '+ str(context.user_data.get('question_ok', '0')) + ' правельных ответов!',  parse_mode=telegram.ParseMode.MARKDOWN)
     message.reply_text(text='Поздравляю! 🎉 Испытание пройдено! Подпишись на рассылку карьерного портала по ссылке  https://sbergraduate.ru/subscription/\n' + \
         'Подойди на стойку Сбербанка, покажи это сообщение и скрин о подписке, получи свой мерч и уникальный номер для розыгрыша крутых призов.\n'
         'Розыгрыш состоится в *19:00 и 20:30* на стенде Сбербанка.\n'
@@ -325,6 +326,13 @@ def done_send(update, context):
     context.user_data['question_num'] = '6'
 
 if __name__=='__main__':
+    
+    file_name = 'conversationbot'
+    if os.path.isfile(file_name):
+        try:
+            os.rename(file_name, datetime.datetime.now().strftime("%d_%m_%Y") + '_' + file_name)
+        except:
+            pass
     
     logging.basicConfig(filename='bot.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.ERROR)
     # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -343,7 +351,7 @@ if __name__=='__main__':
         'read_timeout': 60,
         'connect_timeout': 30
     }
-    pp = PicklePersistence(filename='conversationbot')
+    pp = PicklePersistence(filename=file_name)
     updater = Updater(token, use_context=True, persistence=pp, request_kwargs=REQUEST_KWARGS)
     dispatcher = updater.dispatcher
     context = CallbackContext(dispatcher)
