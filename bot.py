@@ -11,48 +11,54 @@ from db import User
 import time
 
 def check_done(update, context):
-    if str(context.user_data.get('question_num','0')) != '6':
+    qn = context.user_data.get('question_num','0')
+    print(qn)
+    if str(qn) != '6':
         pass
     else:
-        dene(update, context)
+        done_send(update, context)
+        return 'DONE'
     
 
 def start(update, context):
-    if str(context.user_data.get('question_num','0')) == '0':
-        if context.user_data.get('id'):
-            print('user is exists: ' + str(context.user_data['id']))
-        else:
-            context.user_data['id'] = update.message.chat.id
-        print('context.user_data: ' + str(context.user_data))
-        
-        update.message.reply_text(text='Привет, студент!',reply_markup=ReplyKeyboardRemove())
-        
-        keyboard = []
-        
-        update.message.reply_text(config['message']['start'])
-        
-        agree = config['message']['agree']
-        agree_msq = config['message']['agree_msq']
-        agree_btn = config['message']['agree_btn']
-        if agree and agree_msq and agree_btn:
-            if os.path.isfile(agree):
-                
-                keyboard.append([InlineKeyboardButton(text=emojize(':heavy_check_mark:', use_aliases=True) + agree_btn, callback_data=str(AGREE))])
-                reply_markup = InlineKeyboardMarkup(keyboard)   
-                
-                doc = open(agree, 'rb')
-                context.bot.send_document(update.message.chat.id, doc)
-                doc.close()
-                update.message.reply_text(text=agree_msq, reply_markup=reply_markup)
-        
-        return AGREE
+    if check_done(update, context) == 'DONE':
+        return DONE
+    
+    if context.user_data.get('id'):
+        print('user is exists: ' + str(context.user_data['id']))
     else:
-        dene(update, context)
+        context.user_data['id'] = update.message.chat.id
+    print('context.user_data: ' + str(context.user_data))
+    
+    update.message.reply_text(text='Привет, студент!',reply_markup=ReplyKeyboardRemove())
+    
+    keyboard = []
+    
+    update.message.reply_text(config['message']['start'])
+    
+    agree = config['message']['agree']
+    agree_msq = config['message']['agree_msq']
+    agree_btn = config['message']['agree_btn']
+    if agree and agree_msq and agree_btn:
+        if os.path.isfile(agree):
+            
+            keyboard.append([InlineKeyboardButton(text=emojize(':heavy_check_mark:', use_aliases=True) + agree_btn, callback_data=str(AGREE))])
+            reply_markup = InlineKeyboardMarkup(keyboard)   
+            
+            doc = open(agree, 'rb')
+            context.bot.send_document(update.message.chat.id, doc)
+            doc.close()
+            update.message.reply_text(text=agree_msq, reply_markup=reply_markup)
+    
+    return AGREE
+    # else:
+    #     done(update, context)
             
 
 def agree(update, context):
     print('agree start')
     print('agree context.user_data: ' + str(context.user_data))
+    check_done(update, context)
     user = update.callback_query.from_user
     id = user.id
     first_name = user.first_name
@@ -74,7 +80,7 @@ def agree(update, context):
 def name(update, context):
     print('name work start')
     print('name user_data: ' + str(context.user_data))
-    
+    check_done(update, context)
     client_name =  update.message.text
     
     if len(client_name) < 2:
@@ -93,7 +99,7 @@ def name(update, context):
 def phone(update, context):
     print('phone start')
     print('phone user_data: ' + str(context.user_data))
-    
+    check_done(update, context)
     User.update(phone=update.message.contact.phone_number).where(User.id == context.user_data.get('id')).execute()
     update.message.reply_text(text='Напиши пожалуйста свою почту', reply_markup=ReplyKeyboardRemove())
     print('phone end')
@@ -103,7 +109,7 @@ def phone(update, context):
 def email(update, context):
     print('email start')
     print('email user_data: ' + str(context.user_data))
-    
+    check_done(update, context)
     client_email =  update.message.text
     if '@' not in client_email:
         update.message.reply_text('Я вас не понимаю, пожалуйста, попробуйте еще раз')
@@ -112,565 +118,204 @@ def email(update, context):
     User.update(email=client_email).where(User.id == context.user_data.get('id')).execute()
     
     keyboard = []
-    keyboard.append([InlineKeyboardButton(text='ДА', callback_data=str(QUIZ))])
+    answer = 'ДА'
+    keyboard.append([InlineKeyboardButton(text=answer, callback_data='q1')])
     reply_markup = InlineKeyboardMarkup(keyboard)   
             
     update.message.reply_text(text='Приятно познакомиться ' + emojize(':slightly_smiling_face:', use_aliases=True) + '\nИтак, 5 заданий и мерч твой!\nГотов начать?', reply_markup=reply_markup)
     
     print('email end')
-    # context.user_data['quiz'] = 'start'
-    return QUIZ    
-    
-    
-def quiz(update, context):
-    print('quiz start')
-    print('quiz user_data: ' + str(context.user_data))
-    
-    choise = context.user_data.get('quiz', 'start')
-    
-    if choise == 'start':
-        keyboard = []
-        keyboard.append([InlineKeyboardButton(text='Технологии 👨‍💻', callback_data=('technologies'))])
-        keyboard.append([InlineKeyboardButton(text='Офис 🏦', callback_data=('office'))])
-        keyboard.append([InlineKeyboardButton(text='Работа с клиентами 👩‍💼💰👨‍💼' + emojize(':slightly_smiling_face:', use_aliases=True), callback_data=('sales'))])
-        
-        reply_markup = InlineKeyboardMarkup(keyboard)   
-        update.callback_query.message.reply_text(text='Выбери, что тебе больше всего нравится', reply_markup=reply_markup)
-    
-    print('quiz end')
+    context.user_data['answer'] = answer
     return QUIZ
+    
+    
+# def quiz(update, context):
+#     print('quiz start')
+#     print('quiz user_data: ' + str(context.user_data))
+    
+#     choise = context.user_data.get('quiz', 'start')
+    
+#     if choise == 'start':
+#         keyboard = []
+#         keyboard.append([InlineKeyboardButton(text='Технологии 👨‍💻', callback_data=('technologies'))])
+#         keyboard.append([InlineKeyboardButton(text='Офис 🏦', callback_data=('office'))])
+#         keyboard.append([InlineKeyboardButton(text='Работа с клиентами 👩‍💼💰👨‍💼' + emojize(':slightly_smiling_face:', use_aliases=True), callback_data=('sales'))])
+        
+#         reply_markup = InlineKeyboardMarkup(keyboard)   
+#         update.callback_query.message.reply_text(text='Выбери, что тебе больше всего нравится', reply_markup=reply_markup)
+    
+#     print('quiz end')
+#     return QUIZ
 
 
 def subcrible(update):
     update.callback_query.message.reply_text(text='Отлично! Вступай в Наш канал @IT_Sber_EKB', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text='Подписаться', url="t.me/IT_Sber_EKB")]]))
     
 
-def technologies(update, context):
+def q1(update, context):
     check_done(update, context)
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\n - ' + str(context.user_data.get('answer', '')),  parse_mode=telegram.ParseMode.MARKDOWN)
     
-    User.update(test_name='technologies').where(User.id == context.user_data.get('id')).execute()
-    print('technologies start')
-    print('technologies user_data: ' + str(context.user_data))
+    question_text = 'Эрудит заплатил за бутылку с пробкой 11 рублей. Бутылка стоит на 10 рублей дороже чем пробка. Сколько стоит пробка?'
+    question_answers = [
+        '1 рубль',
+        '50 копеек',
+        '25 копеек',
+        '75 копеек',
+    ]
+
+    subcrible(update)
     
-    question_num = context.user_data.get('question_num', '0')
+    keyboard = []
+    for n, i in enumerate(question_answers):
+        keyboard.append(InlineKeyboardButton(text=i, callback_data=('q2:' + str(n))))
+    reply_markup = InlineKeyboardMarkup([keyboard])
+    update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
+    context.user_data['question_num'] = '1'
+            
+def q2(update, context):
+    check_done(update, context)
+    question_answers = [
+        '1 рубль',
+        '50 копеек',
+        '25 копеек',
+        '75 копеек',
+    ]
+    answer = update.callback_query.data.split(':')[1]
+        
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
+
+    if answer == '1':
+        context.user_data['question_ok'] = '1'
     
-    data = update.callback_query.data
-    print('technologies data: ' + str(data))
+    question_text = 'Послезавтра ты выходишь на стажировку в Сбербанк. Скажи в какой именно день недели ты начнешь стажироваться, если три дня назад был день, предшествующий понедельнику?'
+    question_answers = [
+        'Воскресенье',
+        'Среда',
+        'Четверг',
+        'Пятница',
+    ]
+    keyboard = []
+    for n, i in enumerate(question_answers):
+        keyboard.append([InlineKeyboardButton(text=i, callback_data=('q3:' + str(n)))])
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
+    context.user_data['question_num'] = '2'
+            
+def q3(update, context):
+    check_done(update, context)
+    question_answers = [
+        'Воскресенье',
+        'Среда',
+        'Четверг',
+        'Пятница',
+    ]
+    answer = update.callback_query.data.split(':')[1]
+        
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
+
+    if answer == '3':
+        context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
     
-    try:
-        answer = data.split(':')[1]
-    except:
-        answer = context.user_data.get('answer', '')
-    print('question_num:{}, answer: {}'.format(question_num, answer))
+    question_text = 'Лист бумаги прямоугольной формы перегнули пополам шесть раз. В средней части этого сложенного листа просверлили насквозь два отверстия. Сколько отверстий можно будет насчитать на листе после его разворачивания в исходное положение?'
+    question_answers = [
+        '64',
+        '128',
+        '264',
+        '12',
+    ]
     
-    if question_num in ('0', '1'):
-        question_text = 'Эрудит заплатил за бутылку с пробкой 11 рублей. Бутылка стоит на 10 рублей дороже чем пробка. Сколько стоит пробка?'
-        question_answers = [
-            '1 руб.',
-            '0.50 коп.',
-            '0.25 коп.',
-            '0.75 коп.',
-        ]
-        if question_num == '0':
-            context.user_data['question_num'] = '1'
+
+    keyboard = []
+    for n, i in enumerate(question_answers):
+        keyboard.append(InlineKeyboardButton(text=i, callback_data=('q4:' + str(n))))
+    reply_markup = InlineKeyboardMarkup([keyboard])
+    update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
+    context.user_data['question_num'] = '3'
             
-        if not answer:
-            subcrible(update)
-            
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('technologies:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-            
-            try:
-                if answer == '1':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '2'
-            question_num = '2'
-            answer = ''
-            
-    if question_num in ('2'):
-        question_text = 'Что означает – систематизированное (структурированное) хранилище информации?'
-        question_answers = [
-            'Склад информации',
-            'База',
-            'База данных',
-            'Хранилище',
-        ]
+def q4(update, context):
+    check_done(update, context)
+    question_answers = [
+        '64',
+        '128',
+        '264',
+        '12',
+    ]
+    answer = update.callback_query.data.split(':')[1]
         
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append([InlineKeyboardButton(text=i, callback_data=('technologies:' + str(n)))])
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '2':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '3'
-            question_num = '3'
-            answer = ''
-            
-    if question_num in ('3'):
-        question_text = 'По типу связи между данными базы данных подразделяют на:\n\n' + \
-        '1. Иерархические, сетевые, реляционные, объектно-ориентированные\n' + \
-        '2. Компьютерные и персональные\n' + \
-        '3. Модульные, модемные и сетевые\n' + \
-        '4. Основные и дополнительные'
-        question_answers = [
-            '1',
-            '2',
-            '3',
-            '4',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('technologies:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '0':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '4'
-            question_num = '4'
-            answer = ''    
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
     
-    if question_num in ('4'):
-        question_text = 'С чего всегда начинается создание базы данных?\n\n' + \
-        '1. С запуска компьютера и запуска программы просмотрщика баз данных\n' + \
-        '2. С создания макета документа\n' + \
-        '3. С собеседования и обсуждения проблемы построения базы данных\n' + \
-        '4. С разработки структуры ее таблиц'
-        question_answers = [
-            '1',
-            '2',
-            '3',
-            '4',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('technologies:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '3':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '5'
-            question_num = '5'
-            answer = '' 
-            
-    if question_num in ('5'):
-        question_text = 'Как расшифровывается SQL?\n\n1. structured question line\n2. structured query language\n3. strict question line\n4. strong question language'
-        question_answers = [
-            '1',
-            '2',
-            '3',
-            '4',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('technologies:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '1':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '6'
-            question_num = '6'
-            answer = ''
-            
-    if question_num in ('6'):
-        dene(update, context)
+    if answer == '1':
+        context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
     
-    print('question_ok:' + str(context.user_data.get('question_ok')))
-    return QUIZ
+    question_text = 'Ты бежишь дистанцию на Зеленом марафоне. Ты обогнал бегуна, занимавшего вторую позицию. Какую позицию ты сейчас занимаешь?'
+    question_answers = [
+        'Первую',
+        'Вторую',
+    ]
     
-def dene(update, context):
+    keyboard = []
+    for n, i in enumerate(question_answers):
+        keyboard.append(InlineKeyboardButton(text=i, callback_data=('q5:' + str(n))))
+    reply_markup = InlineKeyboardMarkup([keyboard])
+    update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
+    context.user_data['question_num'] = '4'
+            
+def q5(update, context):
+    check_done(update, context)
+    question_answers = [
+        'Первую',
+        'Вторую',
+    ]
+    answer = update.callback_query.data.split(':')[1]
+        
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
+    
+    if answer == '1':
+        context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
+    
+    question_text = 'Раздели 30 на ½ и прибавь 10. Какое число получится?'
+    question_answers = [
+        '15',
+        '45',
+        '85',
+        '70',
+    ]
+    
+    keyboard = []
+    for n, i in enumerate(question_answers):
+        keyboard.append(InlineKeyboardButton(text=i, callback_data=('q6:' + str(n))))
+    reply_markup = InlineKeyboardMarkup([keyboard])
+    update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
+    context.user_data['question_num'] = '5'
+    
+    
+def q6(update, context):
+
+    question_answers = [
+        '15',
+        '45',
+        '85',
+        '70',
+    ]
+    answer = update.callback_query.data.split(':')[1]
+        
+    update.callback_query.message.edit_text(text=update.callback_query.message.text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
+    
+    if answer == '3':
+        context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
+    done_send(update, context)
+    return DONE
+    
+    
+def done_send(update, context):
     try:
         message = update.callback_query.message
     except:
         message = update.message
     message.reply_text(text='Вы ответили правильно на '+ str(context.user_data.get('question_ok', '0')) + ' вопросов из 5!',  parse_mode=telegram.ParseMode.MARKDOWN)
-    message.reply_text(text='Поздравляю! 🎉 Ты завершил испытание! Подойти на стойку Сбербанка, покажи это сообщение, получи свой мерч и уникальный номер для розыгрыша рюкзака. Розыгрыш состоится в *19.00 и 20:30* на стенде Сбербанка. Удачи!',  parse_mode=telegram.ParseMode.MARKDOWN)
-    
-     
-def office(update, context):
-    check_done(update, context)
-    
-    User.update(test_name='office').where(User.id == context.user_data.get('id')).execute()
-    print('office start')
-    print('office user_data: ' + str(context.user_data))
-    
-    question_num = context.user_data.get('question_num', '0')
-    
-    data = update.callback_query.data
-    print('office data: ' + str(data))
-    
-    try:
-        answer = data.split(':')[1]
-    except:
-        answer = context.user_data.get('answer', '')
-    print('question_num:{}, answer: {}'.format(question_num, answer))
-    
-    if question_num in ('0', '1'):
-        question_text = 'Основное назначение электронных таблиц:\n\n1. редактировать и форматировать текстовые документы\n2. хранить большие объемы информации\n3. выполнять расчет по формулам\n4. нет правильного ответа'
-        question_answers = [
-            '1',
-            '2',
-            '3',
-            '4',
-        ]
-        if question_num == '0':
-            context.user_data['question_num'] = '1'
-            
-        if not answer:
-            subcrible(update)
-            
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('office:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-            
-            try:
-                if answer == '2':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '2'
-            question_num = '2'
-            answer = ''
-            
-    if question_num in ('2'):
-        question_text = 'Наименьшей структурной единицей внутри таблицы является...'
-        question_answers = [
-            'строка',
-            'ячейка',
-            'столбец',
-            'диапазон',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append([InlineKeyboardButton(text=i, callback_data=('office:' + str(n)))])
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '1':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '3'
-            question_num = '3'
-            answer = ''
-            
-    if question_num in ('3'):
-        question_text = 'Расширение файлов, созданных в Microsoft Excel – это:'
-        question_answers = [
-            '.xls',
-            '.doc',
-            '.bmp',
-            '.pptx',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append([InlineKeyboardButton(text=i, callback_data=('office:' + str(n)))])
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '0':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '4'
-            question_num = '4'
-            answer = ''
-            
-    if question_num in ('4'):
-        question_text = 'Что позволяет сделать наложенный на текстовый документ водяной знак?\n\n' + \
-        '1. он делает документ уникальным\n' + \
-        '2. он защищает документ от поражения вирусами\n' + \
-        '3. он разрешает сторонним пользователям копировать размещенный в документе текст\n' + \
-        '4. он защищает от копирования файла'
-        question_answers = [
-            '1',
-            '2',
-            '3',
-            '4',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('office:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '0':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '5'
-            question_num = '5'
-            answer = ''             
-            
-    if question_num in ('5'):
-        question_text = 'Задача 5 Какую программу можно использовать для проведения мультимедийной презентации?'
-        question_answers = [
-            'Windows Word',
-            'Microsoft Access',
-            'Microsoft Excel',
-            'Microsoft PowerPoint',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append([InlineKeyboardButton(text=i, callback_data=('office:' + str(n)))])
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '3':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '6'
-            question_num = '6'
-            answer = ''
-            
-    if question_num in ('6'):
-        dene(update, context)
-    
-    print('question_ok:' + str(context.user_data.get('question_ok')))
-    return QUIZ
-                
-     
-     
-def sales(update, context):
-    check_done(update, context)
-    
-    User.update(test_name='sales').where(User.id == context.user_data.get('id')).execute()
-    print('sales start')
-    print('sales user_data: ' + str(context.user_data))
-    
-    question_num = context.user_data.get('question_num', '0')
-    
-    data = update.callback_query.data
-    print('sales data: ' + str(data))
-    
-    try:
-        answer = data.split(':')[1]
-    except:
-        answer = context.user_data.get('answer', '')
-    print('question_num:{}, answer: {}'.format(question_num, answer))
-    
-    if question_num in ('0', '1'):
-        question_text = 'Сколько граней у шестигранного карандаша?'
-        question_answers = [
-            '5',
-            '8',
-            '6',
-            '4',
-        ]
-        if question_num == '0':
-            context.user_data['question_num'] = '1'
-            
-        if not answer:
-            
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('sales:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-            
-            try:
-                if answer == '1':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '2'
-            question_num = '2'
-            answer = ''
-            
-    if question_num in ('2'):
-        question_text = 'Батон разрезали на 3 части. Сколько сделали разрезов?'
-        question_answers = [
-            '2',
-            '3',
-            '0',
-            '1',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('sales:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '0':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '3'
-            question_num = '3'
-            answer = ''
-            
-    if question_num in ('3'):
-        question_text = 'Собака-3, кошка-3, ослик-2, рыбка-0. Чему равняется петушок?'
-        question_answers = [
-            '5',
-            '6',
-            '8',
-            '4',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('sales:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '2':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '4'
-            question_num = '4'
-            answer = ''
-            
-    if question_num in ('4'):
-        question_text = 'Одно яйцо варится 3 минуты. Сколько будут варится 2 яйца?'
-        question_answers = [
-            '6',
-            '0',
-            '2',
-            '3',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append(InlineKeyboardButton(text=i, callback_data=('sales:' + str(n))))
-            reply_markup = InlineKeyboardMarkup([keyboard])
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '3':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '5'
-            question_num = '5'
-            answer = ''             
-            
-    if question_num in ('5'):
-        question_text = 'Термин «финансы» в переводе с латинского означает?'
-        question_answers = [
-            'Денежный платеж',
-            'Долг',
-            'Главный, Доминирующий',
-            'Основной',
-        ]
-        
-        if not answer:
-            keyboard = []
-            for n, i in enumerate(question_answers):
-                keyboard.append([InlineKeyboardButton(text=i, callback_data=('sales:' + str(n)))])
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
-        else:
-            update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-        
-            try:
-                if answer == '0':
-                    context.user_data['question_ok'] = int(context.user_data.get('question_ok', '0'))+1
-            except:
-                pass
-            
-            context.user_data['question_num'] = '6'
-            question_num = '6'
-            answer = ''
-            
-    if question_num in ('6'):
-        dene(update, context)
-    
-    print('question_ok:' + str(context.user_data.get('question_ok')))
-    return QUIZ
-    
+    message.reply_text(text='Поздравляю! 🎉 Испытание пройдено! Подойти на стойку Сбербанка, покажи это сообщение, получи свой мерч и уникальный номер для розыгрыша рюкзака. Розыгрыш состоится в *19.00 и 20:30* на стенде Сбербанка. Удачи!',  parse_mode=telegram.ParseMode.MARKDOWN)
+    context.user_data['question_num'] = '6'
 
 if __name__=='__main__':
     
@@ -678,7 +323,7 @@ if __name__=='__main__':
     # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
     logger = logging.getLogger(__name__)
     
-    AGREE, NAME, PHONE, EMAIL, QUIZ = range(5)
+    AGREE, NAME, PHONE, EMAIL, QUIZ, DONE = range(6)
     
     config = configparser.ConfigParser()
     config.read('quiz.ini')
@@ -704,11 +349,16 @@ if __name__=='__main__':
             PHONE: [MessageHandler(Filters.contact, phone)],
             EMAIL: [MessageHandler(Filters.text, email)],
             QUIZ: [
-                CallbackQueryHandler(quiz, pattern='^' + str(QUIZ) + '$'),
-                CallbackQueryHandler(technologies, pattern='^technologies.*'),
-                CallbackQueryHandler(office, pattern='^office.*'),
-                CallbackQueryHandler(sales, pattern='^sales.*'),
-                ]
+                CallbackQueryHandler(q1, pattern='^q1$'),
+                CallbackQueryHandler(q2, pattern='^q2:\d$'),
+                CallbackQueryHandler(q3, pattern='^q3:\d$'),
+                CallbackQueryHandler(q4, pattern='^q4:\d$'),
+                CallbackQueryHandler(q5, pattern='^q5:\d$'),
+                CallbackQueryHandler(q6, pattern='^q6:\d$'),
+                ],
+            DONE: [
+                CallbackQueryHandler(done_send, pattern='^DONE$'),
+            ]
         },
         fallbacks=[CommandHandler('start', start)],
         name="my_conversation",
