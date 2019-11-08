@@ -184,7 +184,6 @@ def technologies(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-            time.sleep(2)
             
             try:
                 if answer == '1':
@@ -213,8 +212,6 @@ def technologies(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '2':
@@ -247,8 +244,6 @@ def technologies(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '0':
@@ -281,8 +276,6 @@ def technologies(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '3':
@@ -311,8 +304,6 @@ def technologies(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '1':
@@ -378,8 +369,6 @@ def office(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
             
             try:
                 if answer == '2':
@@ -408,8 +397,6 @@ def office(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '1':
@@ -438,8 +425,6 @@ def office(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '0':
@@ -472,8 +457,6 @@ def office(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '0':
@@ -502,8 +485,6 @@ def office(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '3':
@@ -561,8 +542,6 @@ def sales(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
             
             try:
                 if answer == '1':
@@ -591,8 +570,6 @@ def sales(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '0':
@@ -621,8 +598,6 @@ def sales(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '2':
@@ -651,8 +626,6 @@ def sales(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '3':
@@ -681,8 +654,6 @@ def sales(update, context):
             update.callback_query.message.reply_text(text=question_text, reply_markup=reply_markup)
         else:
             update.callback_query.message.edit_text(text=question_text + '\n\nВаш ответ: *' + str(question_answers[int(answer)]) + ' *',  parse_mode=telegram.ParseMode.MARKDOWN)
-
-            time.sleep(2)
         
             try:
                 if answer == '0':
