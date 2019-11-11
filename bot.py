@@ -296,7 +296,17 @@ def done_send(update, context):
         message = update.callback_query.message
     except:
         message = update.message
-    message.reply_text(text='У тебя '+ str(context.user_data.get('question_ok', '0')) + ' правельных ответа из 5!',  parse_mode=telegram.ParseMode.MARKDOWN)
+       
+    q_ok = int(context.user_data.get('question_ok', '0'))
+    if q_ok == 0:
+        msg_dyn = 'У тебя нет правельных ответов'
+    elif q_ok == 1:
+        msg_dyn = 'У тебя 1 правельный ответ из 5!'
+    elif q_ok <= 4:
+        msg_dyn = 'У тебя '+ str(q_ok) + ' правельных ответа из 5!'
+    else:
+        msg_dyn = 'У тебя '+ str(q_ok) + ' правельных ответов из 5!'
+    message.reply_text(text=msg_dyn,  parse_mode=telegram.ParseMode.MARKDOWN)
     message.reply_text(text='Поздравляю! 🎉 Испытание пройдено! Подпишись на рассылку карьерного портала по ссылке  https://sbergraduate.ru/subscription/\n' + \
         'Подойди на стойку Сбербанка, покажи это сообщение и скрин о подписке, получи свой мерч и уникальный номер для розыгрыша крутых призов.\n'
         'Розыгрыш состоится в *19:00 и 20:30* на стенде Сбербанка.\n'
